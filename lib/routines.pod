@@ -1,0 +1,114 @@
+
+=encoding utf8
+
+=head1 NAME
+
+routines
+
+=cut
+
+=head1 ABSTRACT
+
+Typeable Method and Function Signatures
+
+=cut
+
+=head1 SYNOPSIS
+
+  package main;
+
+  use strict;
+  use warnings;
+  use routines;
+
+  fun hello($name) {
+    "hello, $name"
+  }
+
+  hello("world");
+
+=cut
+
+=head1 DESCRIPTION
+
+This pragma is used to provide typeable method and function signtures to the
+calling package, as well as C<before>, C<after>, and C<around> method
+modifiers. Additionally, when used in concert with the L<registry> pragma, this
+pragma will check to determine whether a L<Type::Tiny> registry object is
+associated with the calling package, and if so will use it to reify type
+constraints and resolve type expressions.
+
+  package main;
+
+  use strict;
+  use warnings;
+
+  use registry;
+  use routines;
+
+  fun hello(Str $name) {
+    "hello, $name"
+  }
+
+  hello("world");
+
+Additionally, when used in concert with the L<registry> pragma this pragma will
+check to determine whether a L<Type::Tiny> registry object is associated with
+the calling package, and if so will use it to reify type constraints and
+resolve type expressions.
+
+  package Example;
+
+  use Moo;
+  use registry;
+  use routines;
+
+  fun new($class) {
+    bless {}
+  }
+
+  method hello(Str $name) {
+    "hello, $name"
+  }
+
+  around hello(Str $name) {
+    $self->{name} = $name;
+
+    $self->$orig($name);
+  }
+
+  1;
+
+As mentioned previously, this pragma makes the C<before>, C<after>, and
+C<around> method modifiers available the calling package where those keywords
+were already present in their generic subroutine form.
+
+=cut
+
+=head1 AUTHOR
+
+Al Newkirk, C<awncorp@cpan.org>
+
+=head1 LICENSE
+
+Copyright (C) 2011-2019, Al Newkirk, et al.
+
+This is free software; you can redistribute it and/or modify it under the terms
+of the The Apache License, Version 2.0, as elucidated in the L<"license
+file"|https://github.com/iamalnewkirk/routines/blob/master/LICENSE>.
+
+=head1 PROJECT
+
+L<Wiki|https://github.com/iamalnewkirk/routines/wiki>
+
+L<Project|https://github.com/iamalnewkirk/routines>
+
+L<Initiatives|https://github.com/iamalnewkirk/routines/projects>
+
+L<Milestones|https://github.com/iamalnewkirk/routines/milestones>
+
+L<Contributing|https://github.com/iamalnewkirk/routines/blob/master/CONTRIBUTE.md>
+
+L<Issues|https://github.com/iamalnewkirk/routines/issues>
+
+=cut
