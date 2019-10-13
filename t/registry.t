@@ -11,7 +11,7 @@ registry
 
 =abstract
 
-Register Type Libraries with Namespace
+Register Type Libraries with Namespaces
 
 =cut
 
@@ -28,15 +28,23 @@ Register Type Libraries with Namespace
   # $registry->('main')
   # 'main' Type::Registry object
 
+  # or ...
+  # return registry object based on caller
+  # registry::access('main')
+
+  # and ...
+  # resolve type expressions based on caller
+  # registry::lookup('ClassName')
+
 =cut
 
 =description
 
-This pragma is used to associate namespaces with L<Type::Tiny> type libraries.
-A C<$registry> variable is made available to the caller to be used to access
-registry objects. The variable is a callback (i.e. coderef) which should be
-called with a single argument, the namespace whose registry object you want,
-otherwise the argument defaults to C<main>.
+This pragma is used to associate the calling package with L<Type::Tiny> type
+libraries. A C<$registry> variable is made available to the caller to be used
+to access registry objects. The variable is a callback (i.e. coderef) which
+should be called with a single argument, the namespace whose registry object
+you want, otherwise the argument defaults to C<main>.
 
   package main;
 
@@ -49,11 +57,15 @@ otherwise the argument defaults to C<main>.
 
   $registry;
 
+  # resolve type expression using exported variable
   # my $constraint = $registry->('main')->lookup('StrLength[10]')
 
-You can configure the caller (namespace) to be associated with multiple
-distinct type libraries. The exported C<$registry> object can be used to reify
-type constraints and resolve type expressions.
+  # resolve type expression using registry function
+  # my $constraint = registry::lookup('StrLength[10]', 'main')
+
+You can configure the calling package to be associated with multiple distinct
+type libraries. The exported C<$registry> object can be used to reify type
+constraints and resolve type expressions.
 
 =cut
 
@@ -208,6 +220,47 @@ subtest 'testing registrations', sub {
     ok $registry->lookup($_), "registry confirms $_" for @types_standard;
     ok !eval{$registry->lookup($_)}, "registry denies $_" for @types_common_numeric;
     ok !eval{$registry->lookup($_)}, "registry denies $_" for @types_common_string;
+  };
+
+  subtest 'testing functions', sub {
+    my $class;
+    my $registry;
+
+    {
+      package Test::Registry::Functions;
+
+      use strict;
+      use warnings;
+
+      use registry 'Types::Standard';
+    }
+
+    $class = 'main';
+    $registry = registry::access($class);
+    ok $registry, 'registry::access returns registry';
+    ok $registry->isa('Type::Registry'), 'registry isa Type::Registry';
+    ok registry::lookup($_, $class), "registry confirms $_" for @types_standard;
+    ok !eval{registry::lookup($_, $class)}, "registry denies $_" for @types_common_numeric;
+    ok !eval{registry::lookup($_, $class)}, "registry denies $_" for @types_common_string;
+
+    $class = 'Test::Registry::Functions';
+    $registry = registry::access($class);
+    ok $registry, 'registry::access returns registry';
+    ok $registry->isa('Type::Registry'), 'registry isa Type::Registry';
+    ok registry::lookup($_, $class), "registry confirms $_" for @types_standard;
+    ok !eval{registry::lookup($_, $class)}, "registry denies $_" for @types_common_numeric;
+    ok !eval{registry::lookup($_, $class)}, "registry denies $_" for @types_common_string;
+
+    {
+      package main;
+
+      $registry = registry::access();
+      ok $registry, 'registry::access returns registry';
+      ok $registry->isa('Type::Registry'), 'registry isa Type::Registry';
+      ok registry::lookup($_), "registry confirms $_" for @types_standard;
+      ok !eval{registry::lookup($_)}, "registry denies $_" for @types_common_numeric;
+      ok !eval{registry::lookup($_)}, "registry denies $_" for @types_common_string;
+    }
   };
 };
 
