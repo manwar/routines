@@ -35,8 +35,8 @@ Typeable Method and Function Signatures
 =description
 
 This pragma is used to provide typeable method and function signtures to the
-calling package, as well as C<before>, C<after>, and C<around> method
-modifiers.
+calling package, as well as C<before>, C<after>, C<around>, C<augment> and
+C<override> method modifiers.
 
   package main;
 
@@ -82,9 +82,9 @@ resolve type expressions.
 
 This functionality is based on L<Function::Parameters> and uses Perl's keyword
 plugn API to provide new keywords. As mentioned previously, this pragma makes
-the C<before>, C<after>, and C<around> method modifiers available to the
-calling package where that functionality is already present in its generic
-subroutine callback form.
+the C<before>, C<after>, C<around>, C<augment>, and C<override> method
+modifiers available to the calling package where that functionality is already
+present in its generic subroutine callback form.
 
 =cut
 
