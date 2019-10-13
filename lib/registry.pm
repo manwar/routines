@@ -21,6 +21,14 @@ sub access {
   return $registries{$class};
 }
 
+sub lookup {
+  my ($expr, $class) = @_;
+
+  my $registry = access($class) or return;
+
+  return $registry->lookup($expr);
+}
+
 sub import {
   my ($package, $library) = @_;
 

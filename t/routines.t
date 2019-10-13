@@ -21,6 +21,7 @@ Typeable Method and Function Signatures
 
   use strict;
   use warnings;
+
   use routines;
 
   fun hello($name) {
@@ -35,10 +36,7 @@ Typeable Method and Function Signatures
 
 This pragma is used to provide typeable method and function signtures to the
 calling package, as well as C<before>, C<after>, and C<around> method
-modifiers. Additionally, when used in concert with the L<registry> pragma, this
-pragma will check to determine whether a L<Type::Tiny> registry object is
-associated with the calling package, and if so will use it to reify type
-constraints and resolve type expressions.
+modifiers.
 
   package main;
 
@@ -54,19 +52,20 @@ constraints and resolve type expressions.
 
   hello("world");
 
-Additionally, when used in concert with the L<registry> pragma this pragma will
+Additionally, when used in concert with the L<registry> pragma, this pragma will
 check to determine whether a L<Type::Tiny> registry object is associated with
-the calling package, and if so will use it to reify type constraints and
+the calling package and if so will use it to reify type constraints and
 resolve type expressions.
 
   package Example;
 
   use Moo;
+
   use registry;
   use routines;
 
   fun new($class) {
-    bless {}
+    bless {}, $class
   }
 
   method hello(Str $name) {
@@ -81,9 +80,11 @@ resolve type expressions.
 
   1;
 
-As mentioned previously, this pragma makes the C<before>, C<after>, and
-C<around> method modifiers available the calling package where those keywords
-were already present in their generic subroutine form.
+This functionality is based on L<Function::Parameters> and uses Perl's keyword
+plugn API to provide new keywords. As mentioned previously, this pragma makes
+the C<before>, C<after>, and C<around> method modifiers available to the
+calling package where that functionality is already present in its generic
+subroutine callback form.
 
 =cut
 
