@@ -12,6 +12,7 @@ SYNOPSIS
     
       use strict;
       use warnings;
+    
       use routines;
     
       fun hello($name) {
@@ -23,11 +24,8 @@ SYNOPSIS
 DESCRIPTION
 
     This pragma is used to provide typeable method and function signtures
-    to the calling package, as well as before, after, and around method
-    modifiers. Additionally, when used in concert with the registry pragma,
-    this pragma will check to determine whether a Type::Tiny registry
-    object is associated with the calling package, and if so will use it to
-    reify type constraints and resolve type expressions.
+    to the calling package, as well as before, after, around, augment and
+    override method modifiers.
 
       package main;
     
@@ -43,19 +41,20 @@ DESCRIPTION
     
       hello("world");
 
-    Additionally, when used in concert with the registry pragma this pragma
-    will check to determine whether a Type::Tiny registry object is
-    associated with the calling package, and if so will use it to reify
-    type constraints and resolve type expressions.
+    Additionally, when used in concert with the registry pragma, this
+    pragma will check to determine whether a Type::Tiny registry object is
+    associated with the calling package and if so will use it to reify type
+    constraints and resolve type expressions.
 
       package Example;
     
       use Moo;
+    
       use registry;
       use routines;
     
       fun new($class) {
-        bless {}
+        bless {}, $class
       }
     
       method hello(Str $name) {
@@ -70,9 +69,12 @@ DESCRIPTION
     
       1;
 
-    As mentioned previously, this pragma makes the before, after, and
-    around method modifiers available the calling package where those
-    keywords were already present in their generic subroutine form.
+    This functionality is based on Function::Parameters and uses Perl's
+    keyword plugn API to provide new keywords. As mentioned previously,
+    this pragma makes the before, after, around, augment, and override
+    method modifiers available to the calling package where that
+    functionality is already present in its generic subroutine callback
+    form.
 
 AUTHOR
 
