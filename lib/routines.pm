@@ -34,6 +34,8 @@ sub settings {
   %settings = (befr_settings(@config), %settings);
   %settings = (aftr_settings(@config), %settings);
   %settings = (arnd_settings(@config), %settings);
+  %settings = (augm_settings(@config), %settings);
+  %settings = (over_settings(@config), %settings);
 
   return {%settings};
 }
@@ -137,6 +139,50 @@ sub arnd_settings {
     named_parameters     => 1,
     runtime              => 1,
     shift                => ['$orig', '$self'],
+    types                => 1,
+
+    # include reifier or fallback to function-based
+    ($reifier ? (reify_type => $reifier) : ())
+  });
+}
+
+sub augm_settings {
+  my ($class, $reifier) = @_;
+
+  return (augment => {
+    attributes           => ':method',
+    check_argument_count => 0, # for backwards compat :(
+    check_argument_types => 1,
+    default_arguments    => 1,
+    defaults             => 'method',
+    install_sub          => 'augment',
+    invocant             => 1,
+    name                 => 'required',
+    named_parameters     => 1,
+    runtime              => 1,
+    shift                => '$self',
+    types                => 1,
+
+    # include reifier or fallback to function-based
+    ($reifier ? (reify_type => $reifier) : ())
+  });
+}
+
+sub over_settings {
+  my ($class, $reifier) = @_;
+
+  return (override => {
+    attributes           => ':method',
+    check_argument_count => 0, # for backwards compat :(
+    check_argument_types => 1,
+    default_arguments    => 1,
+    defaults             => 'method',
+    install_sub          => 'override',
+    invocant             => 1,
+    name                 => 'required',
+    named_parameters     => 1,
+    runtime              => 1,
+    shift                => '$self',
     types                => 1,
 
     # include reifier or fallback to function-based
